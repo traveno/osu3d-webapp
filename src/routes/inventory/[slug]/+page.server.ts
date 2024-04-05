@@ -3,9 +3,9 @@ import { error, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { hasPermission, PermCategory, PermFlag } from "$lib/helpers";
 
-export const load = (async ({ params, locals: { supabase, getSession, getPermissions } }) => {
+export const load = (async ({ params, locals: { supabase, getSession, getUserPermissions } }) => {
   const session = await getSession();
-  const permissions = await getPermissions();
+  const permissions = await getUserPermissions();
   
   if (!session || !hasPermission(permissions?.level, PermCategory.INVENTORY, PermFlag.FIRST))
     throw redirect(303, '/');

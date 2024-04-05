@@ -3,9 +3,9 @@ import type { Actions, PageServerLoad } from "./$types";
 import { fetchOneMachine } from "$lib/server/machine";
 import { hasPermission, PermCategory, PermFlag } from "$lib/helpers";
 
-export const load = (async ({ params, locals: { supabase, getSession, getPermissions } }) => {
+export const load = (async ({ params, locals: { supabase, getSession, getUserPermissions } }) => {
   const session = await getSession();
-  const permissions = await getPermissions();
+  const permissions = await getUserPermissions();
   
   if (!session || !hasPermission(permissions?.level, PermCategory.MACHINES, PermFlag.FIRST))
     throw redirect(303, '/');
@@ -19,17 +19,17 @@ export const load = (async ({ params, locals: { supabase, getSession, getPermiss
 }) satisfies PageServerLoad;
 
 export const actions = {
-  resolveFaultsMulti: async ({ request, locals: { supabase, getSession } }) => {
+  resolveFaultsMulti: async ({ request, locals: { supabase, getAuthUser } }) => {
     const formData = await request.formData();
-    const session = await getSession();
+    const user = await getAuthUser();
 
-    const resolved_by_id = session?.user.id;
+    const resolved_by_id = user?.id;
     if (!resolved_by_id) return { success: false };
     let resolveList: { id: string, success: boolean }[] = JSON.parse(formData.get('id-array') as string).map((id: string) => { return { id, success: false } });
 
     for (let job of resolveList) {
       const check = await supabase
-        .from('faults')
+        .from('machine_events')
         .select('*')
         .eq('id', job.id)
         .maybeSingle();

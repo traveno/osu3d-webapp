@@ -3,7 +3,7 @@ import { error, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { hasPermission, PermCategory, PermFlag } from "$lib/helpers";
 
-export const load = (async ({ locals: { supabase, getSession, getPermissions } }) => {
+export const load = (async ({ locals: { supabase, getSession, getUserPermissions: getPermissions } }) => {
   const session = await getSession();
   const permissions = await getPermissions();
   
@@ -35,9 +35,9 @@ export const load = (async ({ locals: { supabase, getSession, getPermissions } }
 }) satisfies PageServerLoad;
 
 export const actions = {
-  submitNewItem: async ({ request, locals: { supabase, getSession } }) => {
+  submitNewItem: async ({ request, locals: { supabase, getAuthUser } }) => {
     const formData = await request.formData();
-    const session = await getSession();
+    const user = await getAuthUser();
 
     const name = formData.get('name') as string;
     const minimum = Number(formData.get('minimum'));
@@ -50,13 +50,13 @@ export const actions = {
       .insert({
         name,
         minimum,
-        created_by_user_id: session!.user.id,
+        created_by_user_id: user!.id,
         inv_category_id
       });
   },
-  submitNewCategory: async ({ request, locals: { supabase, getSession } }) => {
+  submitNewCategory: async ({ request, locals: { supabase, getAuthUser } }) => {
     const formData = await request.formData();
-    const session = await getSession();
+    const user = await getAuthUser();
 
     const name = formData.get('name') as string;
 
@@ -64,12 +64,12 @@ export const actions = {
       .from('inv_categories')
       .insert({
         name,
-        created_by_user_id: session!.user.id
+        created_by_user_id: user!.id
       });
   },
-  submitNewChange: async ({ request, locals: { supabase, getSession } }) => {
+  submitNewChange: async ({ request, locals: { supabase, getAuthUser } }) => {
     const formData = await request.formData();
-    const session = await getSession();
+    const user = await getAuthUser();
 
     const mode = formData.get('mode') as 'add' | 'subtract';
     const item_id = formData.get('item_id') as string;
@@ -80,7 +80,7 @@ export const actions = {
       .insert({
         inv_item_id: item_id,
         amount: mode === 'add' ? amount : -amount,
-        created_by_user_id: session!.user.id
+        created_by_user_id: user!.id
       });
   }
 } satisfies Actions;

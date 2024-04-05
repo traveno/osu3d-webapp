@@ -1,12 +1,9 @@
 <script lang="ts">
-  import type { ActionData, PageData } from './$types';
+  import type { PageData } from './$types';
   import UserTable from '$lib/components/tables/UserTable.svelte';
   import PageHeader from '$lib/components/PageHeader.svelte';
-  import ledger from '$lib/images/orange_book.png';
 
   export let data: PageData;
-  export let form: ActionData;
-
   let { userLevels } = data;
 </script>
 

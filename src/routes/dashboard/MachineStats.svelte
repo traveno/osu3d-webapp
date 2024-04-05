@@ -2,13 +2,24 @@
   import { MachineStatus, type DashboardMachine } from "$lib/types/models";
   import { Layers } from "lucide-svelte";
 
-  export let routeData: DashboardMachine[];
+  export let vmStream: Promise<DashboardMachine[]>;
 
-  $: activeJobCount = routeData.filter(m => m.status === MachineStatus.WORKING).length;
-  $: activeFaultCount = routeData.filter(m => m.status === MachineStatus.FAULT).length;
-  $: activeIdleCount = routeData.filter(m => m.status === MachineStatus.IDLE).length;
+  let vm: DashboardMachine[] | null = null;
+
+  $: if (vmStream) {
+    vmStream.then(data => {
+      vm = data;
+    });
+  }
+
+  $: activeJobCount = vm?.filter(m => m.status === MachineStatus.WORKING).length;
+  $: activeFaultCount = vm?.filter(m => m.status === MachineStatus.FAULT).length;
+  $: activeIdleCount = vm?.filter(m => m.status === MachineStatus.IDLE).length;
 </script>
 
+{#if !vm}
+  <div class="suspense"></div>
+{:else}
 <div class="col-span-4 lg:col-span-2 window min-w-full">
   <div class="window-header">
     <Layers />
@@ -39,3 +50,4 @@
     
   </div>
 </div>
+{/if}

@@ -3,9 +3,9 @@ import { error, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { PermCategory, PermFlag, createTree, hasPermission } from "$lib/helpers";
 
-export const load = (async ({ params, locals: { supabase, getSession, getPermissions } }) => {
+export const load = (async ({ params, locals: { supabase, getSession, getUserPermissions } }) => {
   const session = await getSession();
-  const permissions = await getPermissions();
+  const permissions = await getUserPermissions();
   
   if (!session || !hasPermission(permissions?.level, PermCategory.INVENTORY, PermFlag.FIRST))
     throw redirect(303, '/');
@@ -20,7 +20,7 @@ export const load = (async ({ params, locals: { supabase, getSession, getPermiss
 
   const tree = createTree(inventoryLocations, 'id', 'parent');
 
-  console.log(tree);
+  // console.log(tree);
 
   return { session, tree }
 }) satisfies PageServerLoad;

@@ -44,35 +44,35 @@
         <Paginate totalRows={faults.length} bind:lowerIndex bind:upperIndex />
     </div>
     {#if lowerIndex !== undefined && upperIndex !== undefined}
-    <div class="window !p-0">
+    <div class="window overflow-x-auto whitespace-nowrap">
       <table class="table">
           <thead>
               <tr>
                   <th></th>
                   <th>Date</th>
                   <th>Code</th>
-                  <th class="hidden md:table-cell">Issued By</th>
+                  <th>Issued By</th>
                   <th>Description</th>
                   <th>Resolved</th>
-                  <th class="hidden md:table-cell">Resolved By</th>
-                  <th class="hidden md:table-cell">Resolved At</th>
+                  <th>Resolved By</th>
+                  <th>Resolved At</th>
               </tr>
           </thead>
           <tbody>
               {#each faults.slice(lowerIndex, upperIndex) as fault, i}
                   <tr class="transition {fault.checked ? 'bg-success text-success-content' : ''}" class:cursor-pointer={!fault.resolved} on:click={() => fault.resolved ? null : fault.checked = !fault.checked}>
                       <td><input type="checkbox" class="checkbox bg-base-100 disabled:bg-opacity-25 align-middle" bind:checked={fault.checked} disabled={fault.resolved} /></td>
-                      <td><span class="hidden md:inline">{getDateAndTime(fault.created_at, true)}</span><span class="md:hidden">{getDateAndTime(fault.created_at, false)}</span></td>
+                      <td><span>{getDateAndTime(fault.created_at, true)}</span><span class="md:hidden">{getDateAndTime(fault.created_at, false)}</span></td>
                       <td><code class="p-1 rounded-lg uppercase {getEventTypeColor(fault.event_type)}">{fault.event_type}</code></td>
-                      <td class="hidden md:table-cell">{fault.created_by?.full_name ?? '—'}</td>
+                      <td>{fault.created_by?.full_name ?? '—'}</td>
                       <td>
                           <div class="tooltip before:whitespace-pre-wrap before:content-[attr(data-tip)]" data-tip={fault.description ?? '—'}>
                               <span class="w-32 max-w-32 truncate inline-block text-start">{fault.description ?? '—'}</span>
                           </div>
                       </td>
                       <td><code class="p-1 rounded-lg uppercase {getResolvedColor(fault.resolved)}">{fault.resolved}</code></td>
-                      <td class="hidden md:table-cell">{fault.resolved_by?.full_name ?? '—'}</td>
-                      <td class="hidden md:table-cell">{getDateAndTime(fault.resolved_at, true)}</td>
+                      <td>{fault.resolved_by?.full_name ?? '—'}</td>
+                      <td>{getDateAndTime(fault.resolved_at, true)}</td>
                   </tr>
               {/each}
           </tbody>

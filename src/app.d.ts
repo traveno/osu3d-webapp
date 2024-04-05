@@ -2,7 +2,7 @@
 // for information about these interfaces
 import type { UserPermissions, UserProfile } from '$lib/types/models';
 import type { Database } from '$lib/types/supabase';
-import { SupabaseClient, Session } from '@supabase/supabase-js';
+import { SupabaseClient, Session, type User } from '@supabase/supabase-js';
 declare global {
   
   // Populated by Vite
@@ -13,8 +13,9 @@ declare global {
     
     interface Locals {
       supabase: SupabaseClient<Database>;
+      getAuthUser(): Promise<User | null>;
       getSession(): Promise<Session | null>;
-      getPermissions(): Promise<UserPermissions | null>;
+      getUserPermissions(): Promise<UserPermissions | null>;
       getUserProfile(): Promise<UserProfile | null>;
     }
     interface PageData {

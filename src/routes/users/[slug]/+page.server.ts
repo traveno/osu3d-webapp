@@ -3,7 +3,7 @@ import { error, redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { hasPermission, PermCategory, PermFlag } from "$lib/helpers";
 
-export const load = (async ({ params, locals: { supabase, getSession, getPermissions } }) => {
+export const load = (async ({ params, locals: { supabase, getSession, getUserPermissions: getPermissions } }) => {
   const session = await getSession();
   const permissions = await getPermissions();
 

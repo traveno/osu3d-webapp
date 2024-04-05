@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from "svelte";
 	import { ArrowLeft, ArrowRight } from "svelte-heros-v2";
 
     export let totalRows: number;
@@ -23,16 +22,14 @@
         return pageSize * currentPage > totalRows ? totalRows : pageSize * currentPage;
     }
 
-    $: if (totalRows) {
-        changePage(currentPage);
-    }
+    $: if (totalRows >= 0) changePage(1);
 </script>
 
-<div class="flex flex-row items-center self-end">
+<div class="flex flex-row items-center self-end whitespace-nowrap">
     <button class="btn btn-sm btn-ghost disabled:bg-transparent" on:click={() => changePage(currentPage - 1)} disabled={lowerIndex === 0}>
         <ArrowLeft class="outline-none" />
     </button>
-    <label class="w-20 md:w-36 text-center"><span class="hidden md:inline">Entries</span> {upperIndex === 0 ? 0 : lowerIndex + 1} — {upperIndex}</label>
+    <span class="w-20 md:w-36 text-center"><span class="hidden md:inline">Entries</span> {upperIndex === 0 ? 0 : lowerIndex + 1} — {upperIndex}</span>
     <button class="btn btn-sm btn-ghost disabled:bg-transparent" on:click={() => changePage(currentPage + 1)} disabled={upperIndex === totalRows}>
         <ArrowRight class="outline-none" />
     </button>

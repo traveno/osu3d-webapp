@@ -1,54 +1,36 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { fetchDashboardRouteData } from '$lib/server/machine';
-import type { Announcement } from '$lib/types/models';
+import { fetchAnnouncements, fetchDashboardRouteData } from '$lib/server/machine';
 
-export const load = (async ({ locals: { supabase, getSession, getPermissions } }) => {
+export const load = (async ({ locals: { supabase, getSession } }) => {
   const session = await getSession();
   if (!session) throw redirect(303, '/');
 
-  const routeData = await fetchDashboardRouteData(supabase);
+  setTimeout(async () => {
+    // Update last visit date
+    await supabase.from('profiles')
+      .update({
+        last_visit_at: new Date().toISOString()
+      })
+      .eq('user_id', session.user.id);
+  }, 1000);
 
-  // Get last visit date
-  const { data: profileData } = await supabase.from('profiles')
-    .select('last_visit_at, discord')
-    .eq('user_id', session.user.id)
-    .maybeSingle();
-
-  const { data: announcements } = await supabase.from('announcements')
-    .select(`
-      *,
-      created_by: profiles(*)
-    `)
-    .order('created_at', { ascending: false })
-    .limit(2)
-    .returns<Announcement[]>();
-
-  // Update last visit date
-  await supabase.from('profiles')
-    .update({
-      last_visit_at: new Date().toISOString()
-    })
-    .eq('user_id', session.user.id);
-
-  const { data: profile } = await supabase
-		.from('profiles')
-		.select(`email, full_name, discord`)
-		.eq('user_id', session.user.id)
-		.maybeSingle();
-
-  return { session, routeData, profile, announcements, profileData };
+  return {
+    session,
+    annsStream: fetchAnnouncements(supabase),
+    vmStream: fetchDashboardRouteData(supabase)
+  };
 }) satisfies PageServerLoad;
 
 export const actions = {
-  reportFault: async ({ request, locals: { supabase, getSession } }) => {
+  reportFault: async ({ request, locals: { supabase, getAuthUser } }) => {
+    const authUser = await getAuthUser();
     const formData = await request.formData();
-    const session = await getSession();
 
     const description = formData.get('description') as string;
     const machine_id = formData.get('machine_id') as string;
     const print_id = formData.get('print_id') as string;
-    const created_by_user_id = session?.user.id;
+    const created_by_user_id = authUser?.id;
 
     if (description === '' || !created_by_user_id) return;
 
@@ -66,14 +48,14 @@ export const actions = {
     if (result.error)
       throw error(result.status, result.error.message);
   },
-  addPrintLog: async ({ request, locals: { supabase, getSession } }) => {
+  addPrintLog: async ({ request, locals: { supabase, getAuthUser } }) => {
+    const authUser = await getAuthUser();
     const formData = await request.formData();
-    const session = await getSession();
 
     const machine_id = formData.get('machine_id') as string;
     const printLogHours = Number(formData.get('hours') as string);
     const printLogGrams = Number(formData.get('grams') as string);
-    const created_by_user_id = session?.user.id;
+    const created_by_user_id = authUser?.id;
 
     if (printLogHours === 0 || printLogGrams === 0 || !created_by_user_id) return;
 
@@ -86,14 +68,14 @@ export const actions = {
       filament: printLogGrams
     });
   },
-  cancelPrintLog: async ({ request, locals: { supabase, getSession } }) => {
-    const session = await getSession();
+  cancelPrintLog: async ({ request, locals: { supabase, getAuthUser } }) => {
+    const authUser = await getAuthUser();
     const formData = await request.formData();
 
     const print_id = formData.get('print_id') as string | null;
     const machine_id = formData.get('machine_id') as string | null;
 
-    const created_by_user_id = session?.user.id;
+    const created_by_user_id = authUser?.id;
 
     if (!print_id || !machine_id || !created_by_user_id) return;
 

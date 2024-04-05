@@ -126,7 +126,7 @@
     
                 </div>
                 <div class="aspect-square flex flex-col justify-center {machine.status === MachineStatus.FAULT ? 'opacity-25' : ''}">
-                  <img src="/{machine.model}.png" class="h-36 w-36 md:h-48 md:w-48" />
+                  <img alt="Printer" src="/{machine.model}.png" class="h-36 w-36 md:h-48 md:w-48" />
                 </div>
               </div>
               <!-- Buttons -->

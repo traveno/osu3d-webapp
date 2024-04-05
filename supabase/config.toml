@@ -72,7 +72,7 @@ redirect_uri = "http://localhost:54321/auth/v1/callback"
 url = ""
 
 [analytics]
-enabled = true
+enabled = false
 port = 54327
 vector_port = 54328
 # Setup BigQuery project to enable log viewer on local development stack.

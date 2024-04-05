@@ -91,7 +91,7 @@ svg:focus {
   }
 
   & > .window-content {
-    @apply p-4;
+    @apply p-4 h-full;
   }
 }
 
@@ -102,4 +102,15 @@ svg:focus {
 /* Hide scrollbar for Chrome, Safari and Opera */
 .drawer-side::-webkit-scrollbar {
   display: none;
+}
+
+.suspense {
+  @apply flex flex-col justify-center items-center absolute inset-0;
+  &::after {
+    @apply content-[''] loading loading-spinner opacity-50;
+  }
+}
+
+div:has(> div.suspense) {
+  @apply relative;
 }

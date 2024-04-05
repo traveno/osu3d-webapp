@@ -21,7 +21,7 @@
   const appVersion = __APP_VERSION__;
 </script>
 
-<div class="z-20 drawer-side">
+<div class="z-10 drawer-side">
   <label for="drawer-id" class="drawer-overlay"></label>
     <!-- <div class="w-12">
       <img src="/osu3d.svg" alt="Club logo" class="m-auto opacity-75">

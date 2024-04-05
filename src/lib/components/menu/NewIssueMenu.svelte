@@ -42,9 +42,9 @@
   });
 </script>
 
-<div role="menu" tabindex="-1" use:floatingRef on:click={() => showTooltip = !showTooltip} class="{showTooltip ? 'z-20' : 'z-0'}">
+<button use:floatingRef on:click={() => showTooltip = !showTooltip} class="{showTooltip ? 'z-20' : 'z-0'}">
   <slot />
-</div>
+</button>
 
 {#if showTooltip}
 <div class="fixed  z-20" use:floatingContent>

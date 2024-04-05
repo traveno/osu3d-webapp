@@ -38,7 +38,7 @@
       <Paginate totalRows={inventory.length} bind:lowerIndex bind:upperIndex />
   </div>
   
-  <div class="window !p-0">
+  <div class="window overflow-x-auto whitespace-nowrap">
     <table class="table">
         <thead>
             <tr>

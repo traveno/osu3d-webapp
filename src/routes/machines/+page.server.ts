@@ -3,7 +3,7 @@ import type { PageServerLoad } from "./$types";
 import { fetchAllMachines } from "$lib/server/machine";
 import { PermCategory, PermFlag, hasPermission } from "$lib/helpers";
 
-export const load = (async ({ locals: { supabase, getSession, getPermissions } }) => {
+export const load = (async ({ locals: { supabase, getSession, getUserPermissions: getPermissions } }) => {
   const session = await getSession();
   const permissions = await getPermissions();
   

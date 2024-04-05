@@ -30,13 +30,13 @@
         <Paginate totalRows={prints.length} bind:lowerIndex bind:upperIndex />
     </div>
     {#if lowerIndex !== undefined && upperIndex !== undefined}
-    <div class="window !p-0">
+    <div class="window overflow-x-auto whitespace-nowrap">
       <table class="table">
           <thead>
               <tr>
                   <th></th>
                   <th>Date</th>
-                  <th class="hidden md:table-cell">Created By</th>
+                  <th>Created By</th>
                   <th>Hours</th>
                   <th>Consumed</th>
                   <th>Status</th>
@@ -49,7 +49,7 @@
                   <tr>
                       <td><input type="checkbox" class="checkbox checkbox-accent disabled:bg-opacity-25" disabled /></td>
                       <td><span class="hidden md:inline">{getDateAndTime(print.created_at, true)}</span><span class="md:hidden">{getDateAndTime(print.created_at, false)}</span></td>
-                      <td class="hidden md:table-cell">{print.created_by.full_name}</td>
+                      <td>{print.created_by.full_name}</td>
                       <td>
                           {((new Date(print.done_at).getTime() - new Date(print.created_at).getTime()) / 1000 / 60 / 60).toFixed(2)}
                       </td>

@@ -2,18 +2,19 @@
 	import { arrow, createFloatingActions } from "svelte-floating-ui";
 	import { offset, shift } from "svelte-floating-ui/core";
 	import { Minus, Plus } from "svelte-heros-v2";
+  import { cubicInOut } from "svelte/easing";
 	import { writable } from "svelte/store";
-	import { fade, fly } from "svelte/transition";
+	import { fade, fly, scale } from "svelte/transition";
 
   let showTooltip = false;
   let amount = 0;
   export let itemId: string;
   export let mode: 'add' | 'subtract' = 'add';
 
-  const arrowRef = writable<HTMLElement>();
+  const arrowRef = writable<HTMLElement>({ style: { } } as HTMLElement);
 
   const [floatingRef, floatingContent] = createFloatingActions({
-    strategy: 'absolute',
+    strategy: 'fixed',
     placement: 'bottom',
     middleware: [
       offset(20),
@@ -28,7 +29,7 @@
         bottom: 'top',
         left: 'right'
       }[placement.split('-')[0]];
-
+      if (!$arrowRef) return;
       Object.assign($arrowRef.style, {
         left: x != null ? `${x}px` : '',
         top: y != null ? `${y}px` : '',
@@ -38,13 +39,14 @@
   });
 </script>
 
-<div role="menu" tabindex="-1" use:floatingRef on:click={() => showTooltip = !showTooltip} class="{showTooltip ? 'z-20' : ''}">
+<button use:floatingRef on:click={() => showTooltip = !showTooltip} class="{showTooltip ? 'z-30' : ''}">
   <slot />
-</div>
+</button>
 
 {#if showTooltip}
-<div class="absolute w-52 z-20" use:floatingContent>
-  <div class="w-full rounded-2xl p-4 transition flex flex-col items-center justify-center gap-2 {mode === 'add' ? 'bg-success' : 'bg-error'}" transition:fly={{ y: 25, duration: 200 }}>
+<button class="fixed z-20 inset-0 bg-base-100/50" transition:fade={{ duration: 200 }} on:click={() => showTooltip = false}></button>
+<div class="fixed w-52 z-20" use:floatingContent>
+  <div class="w-full rounded-2xl p-4 transition flex flex-col items-center justify-center gap-2 {mode === 'add' ? 'bg-success' : 'bg-error'}" transition:scale={{ start: 0.95, duration: 100 }}>
 
     <!-- Arrow -->
     <div class="absolute {mode === 'add' ? 'fill-success' : 'fill-error'}" bind:this={$arrowRef}>
@@ -80,5 +82,5 @@
   </div>
 </div>
 
-<button class="fixed w-screen h-screen top-0 left-0 bg-neutral-900/50 z-10" transition:fade={{ duration: 200 }} on:click={() => showTooltip = false}></button>
+
 {/if}

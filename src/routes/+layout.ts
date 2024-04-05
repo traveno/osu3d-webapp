@@ -4,9 +4,10 @@ import { dev } from '$app/environment';
 import { createBrowserClient, isBrowser, parse } from '@supabase/ssr';
 import type { Database } from '$lib/types/supabase';
 
-export const load: LayoutLoad = async ({ fetch, data, depends, url }) => {
+export const load: LayoutLoad = async ({ fetch, depends, url, data }) => {
   depends('supabase:auth');
   
+  // Create a local Supabase client
   const supabase = createBrowserClient<Database>(
     dev ? PUBLIC_DEV_SUPABASE_URL : PUBLIC_SUPABASE_URL,
     dev ? PUBLIC_DEV_SUPABASE_ANON_KEY : PUBLIC_SUPABASE_ANON_KEY, {
@@ -25,8 +26,9 @@ export const load: LayoutLoad = async ({ fetch, data, depends, url }) => {
     }
   });
 
+  // Get session data locally (we're on the client here)
   const {
-    data: { session }
+    data: { session },
   } = await supabase.auth.getSession();
 
   return {

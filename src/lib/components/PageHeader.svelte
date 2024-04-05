@@ -17,7 +17,7 @@
 
   <div class="flex w-full items-center">
     <div class="grow hidden lg:inline w-fit text-3xl lg:font-thin z-10">{ name }</div>
-    <div class="grow lg:hidden md:text-2xl z-10 flex items-center w-full h-full gap-2">
+    <div class="grow lg:hidden text-2xl z-10 flex items-center w-full h-full gap-2">
     
     
       <img src="/osu3d.svg" alt="Club logo" class="h-10 w-10 opacity-75" />
